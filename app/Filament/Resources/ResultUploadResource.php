@@ -38,7 +38,7 @@ class ResultUploadResource extends Resource
                         Select::make('result_root_id')
                             ->label('Result Root')
                             ->required()
-                            ->options(ResultRoot::all()->pluck('name', 'id')),
+                            ->options(ResultRoot::orderBy('created_at', 'desc')->get()->pluck('name', 'id')),
                         Select::make('class_id')
                             ->label('Class')
                             ->required()

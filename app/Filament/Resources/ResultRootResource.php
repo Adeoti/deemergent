@@ -94,6 +94,9 @@ class ResultRootResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(
+                ResultRoot::query()->orderBy('created_at', 'desc')
+            )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->description(function (ResultRoot $record) {

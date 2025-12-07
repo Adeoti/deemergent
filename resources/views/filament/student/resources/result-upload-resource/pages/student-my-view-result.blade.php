@@ -81,7 +81,7 @@
                          <p>Student ID: {{ $studentData['info']->id }}</p>
                          <p>Email: {{ $studentData['info']->email }}</p>
                          <p>Attendance: {{ App\Models\Attendance::where('result_root_id', $record->id)->where('student_id', $studentData['info']->id)->count() }}</p>
-                         
+                         <p class="contact-item"><span class="bold">Class:</span> {{ $class->name ?? 'N/A' }}</p>
                         </div>
      
                         @php
@@ -111,7 +111,7 @@
                  <div class="contact-column">
                      
                      
-                     <p class="contact-item"><span class="bold">Class:</span> {{ $class->name ?? 'N/A' }}</p>
+                     
                      <p class="contact-item"><span class="bold">Number In Class:</span> {{ $number_in_class ?? 'N/A' }}</p>
                      <p class="contact-item">
                         <span class="bold">Next Term Begins:</span> 

@@ -1522,10 +1522,11 @@
                     <li><a href="#" class="nav-link" data-page="about">About</a></li>
                     <li><a href="#" class="nav-link" data-page="programs">Programs</a></li>
                     <li><a href="#" class="nav-link" data-page="admissions">Admissions</a></li>
-                    <li><a href="#" class="nav-link" data-page="facilities">Facilities</a></li>
-                    <li><a href="#" class="nav-link" data-page="gallery">Gallery</a></li>
+                    {{-- <li><a href="#" class="nav-link" data-page="facilities">Facilities</a></li> --}}
+                    {{-- <li><a href="#" class="nav-link" data-page="gallery">Gallery</a></li> --}}
                     <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
-                    <li><a href="/student/login" target="_blank">Student Portal</a></li>
+                    <li><a href="/student/login">Portal</a></li>
+                    <li><a href="https://mail.hostinger.com/v2/mailboxes/INBOX" target="_blank">Webmail</a></li>
                 </ul>
                 <button class="mobile-menu-btn" id="mobileMenuBtn">
                     <i class="fas fa-bars"></i>
@@ -1564,7 +1565,7 @@
                     <button class="btn" id="discoverStoryBtn">Discover Our Story</button>
                 </div>
                 <div class="welcome-image" data-aos="fade-left">
-                    <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80"
+                    <img src="{{asset('school-images/de_image_1.jpeg')}}"
                         alt="Students at De Emergent Icon Int'l Schools">
                 </div>
             </div>
@@ -1623,7 +1624,7 @@
             <div class="programs-container">
                 <div class="program-card" data-aos="fade-up" data-aos-delay="100" data-program="stem">
                     <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                        <img src="{{asset('school-images/de_image_1.jpeg')}}"
                             alt="Global Education">
                     </div>
                     <div class="card-content">
@@ -1637,7 +1638,7 @@
                 </div>
                 <div class="program-card" data-aos="fade-up" data-aos-delay="200" data-program="arts">
                     <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80"
+                        <img src="{{asset('school-images/de_image_2.jpeg')}}"
                             alt="Values Education">
                     </div>
                     <div class="card-content">
@@ -1651,7 +1652,7 @@
                 </div>
                 <div class="program-card" data-aos="fade-up" data-aos-delay="300" data-program="sports">
                     <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                        <img src="{{asset('school-images/de_image_3.jpeg')}}"
                             alt="Facilities">
                     </div>
                     <div class="card-content">
@@ -1873,35 +1874,35 @@
             </div>
             <div class="gallery-container">
                 <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                    <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80"
+                    <img src="{{asset('school-images/de_image_1.jpeg')}}"
                         alt="Classroom activities">
                     <div class="gallery-overlay">
                         <h4>Global Learning</h4>
                     </div>
                 </div>
                 <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                    <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                    <img src="{{asset('school-images/de_image_4.jpeg')}}"
                         alt="Students collaborating">
                     <div class="gallery-overlay">
                         <h4>Collaborative Learning</h4>
                     </div>
                 </div>
                 <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                    <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80"
+                    <img src="{{asset('school-images/de_image_2.jpeg')}}"
                         alt="Cultural activities">
                     <div class="gallery-overlay">
                         <h4>Cultural Exchange</h4>
                     </div>
                 </div>
                 <div class="gallery-item" data-aos="zoom-in" data-aos-delay="400">
-                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                    <img src="{{asset('school-images/de_image_2.jpeg')}}"
                         alt="School facilities">
                     <div class="gallery-overlay">
                         <h4>State-of-the-Art Facilities</h4>
                     </div>
                 </div>
                 <div class="gallery-item" data-aos="zoom-in" data-aos-delay="500">
-                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                    <img src="{{asset('school-images/de_image_3.jpeg')}}"
                         alt="International education">
                     <div class="gallery-overlay">
                         <h4>International Perspective</h4>
@@ -1944,7 +1945,8 @@
                         <li><a href="#" class="footer-link" data-page="facilities">Facilities</a></li>
                         <li><a href="#" class="footer-link" data-page="gallery">Photo Gallery</a></li>
                         <li><a href="#" class="footer-link" data-page="contact">Contact Us</a></li>
-                        <li><a href="#" target="_blank">Student Portal</a></li>
+                        <li><a href="/student/login" target="_blank">Portal</a></li>
+                        <li><a href="https://mail.hostinger.com/v2/mailboxes/INBOX" target="_blank">Webmail</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
@@ -1973,27 +1975,27 @@
                     <h3>Gallery</h3>
                     <div class="gallery-grid">
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80"
+                            <img src="{{asset('school-images/de_image_2.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                            <img src="{{asset('school-images/de_image_1.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80"
+                            <img src="{{asset('school-images/de_image_3.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                            <img src="{{asset('school-images/de_image_4.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                            <img src="{{asset('school-images/de_image_1.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                         <div class="gallery-item-small">
-                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                            <img src="{{asset('school-images/de_image_2.jpeg')}}"
                                 alt="School Gallery">
                         </div>
                     </div>
@@ -2180,14 +2182,14 @@
             <div class="modal-body">
                 <div class="gallery-container">
                     <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80"
+                        <img src="{{asset('school-images/de_image_1.jpeg')}}"
                             alt="Classroom activities">
                         <div class="gallery-overlay">
                             <h4>Interactive Learning</h4>
                         </div>
                     </div>
                     <div class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                        <img src="{{asset('school-images/de_image_2.jpeg')}}"
                             alt="Students collaborating">
                         <div class="gallery-overlay">
                             <h4>Collaborative Projects</h4>
@@ -2530,7 +2532,8 @@
                 <li><a href="#" class="drawer-link" data-page="gallery"><i class="fas fa-images"></i> Gallery</a></li>
                 <li><a href="#" class="drawer-link" data-page="contact"><i class="fas fa-envelope"></i> Contact Us</a>
                 </li>
-                <li><a href="#" target="_blank"><i class="fas fa-sign-in-alt"></i> Student Portal</a></li>
+                <li><a href="/student/login" ><i class="fas fa-sign-in-alt"></i>Portal</a></li>
+                <li><a href="https://mail.hostinger.com/v2/mailboxes/INBOX" target="_blank"><i class="fas fa-envelope"></i> Webmail</a></li>
             </ul>
         </div>
     </div>
