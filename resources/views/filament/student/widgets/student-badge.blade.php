@@ -23,7 +23,7 @@
 
             <!-- Student Details Column -->
             <div class="details-column">
-                <h3 class="section-title details-title">Student Information</h3>
+                <h3 class="section-title details-title">Icon Information</h3>
                 <p class="detail-item"><span class="bold">Roll Number:</span> {{ $student->student->roll_number ?? 'N/A' }}</p>
                 <p class="detail-item"><span class="bold">Guardian:</span> {{ $student->student->guardian_name ?? 'N/A' }}</p>
                 <p class="detail-item"><span class="bold">Parent Contact:</span> {{ $student->student->parent_contact ?? 'N/A' }}</p>
@@ -54,11 +54,11 @@
     display: grid;
     grid-template-columns: 1fr 2fr 2fr;
     gap: 20px;
-    background: linear-gradient(135deg, #7b2ff7, #ff3d60);
+    background-color: #f5f5f5; /* Light gray background */
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 30px;
-    color: white;
+    color: #000000; /* Black text color */
 }
 
 /* Passport Column */
@@ -66,7 +66,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 .passport-img-container {
@@ -76,8 +75,8 @@
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 15px;
-    border: 4px solid white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 4px solid #d3d3d3; /* Light gray border */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .passport-img {
@@ -90,20 +89,22 @@
     font-size: 1.3rem;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #000000; /* Black text */
 }
 
 .student-class {
     font-size: 1.2rem;
-    opacity: 0.8;
+    color: #333333; /* Dark gray text */
 }
 
 /* Details and Contact Column */
 .details-column,
 .contact-column {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: #ffffff; /* White background for contrast */
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
 }
 
 .section-title {
@@ -113,25 +114,27 @@
     text-align: center;
     padding: 10px;
     border-radius: 8px;
-    color: #ffffff;
+    color: #ffffff; /* White text for titles */
 }
 
 .details-title {
-    background-color: #ff3d60;
+    background-color: #4a5568; /* Dark gray for details title */
 }
 
 .contact-title {
-    background-color: #0e153a;
+    background-color: #2d3748; /* Slightly darker gray for contact title */
 }
 
 .detail-item,
 .contact-item {
     font-size: 1.1rem;
     margin-bottom: 10px;
+    color: #000000; /* Black text */
 }
 
 .bold {
     font-weight: bold;
+    color: #2d3748; /* Dark color for bold text */
 }
 
 /* Responsive Design */
@@ -163,6 +166,5 @@
         font-size: 1rem;
     }
 }
-
 </style>
 @endassets
