@@ -176,7 +176,7 @@
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Guardian:</span>
                                     {{ $student->student->guardian_name ?? 'N/A' }}</p>
-                               
+
 
                                 <p>Times present:
                                     {{ App\Models\Attendance::where('status', 'Present')->where('result_root_id', $record->id)->where('student_id', $studentData['info']->id)->count() }}
@@ -304,7 +304,51 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="font-weight:600; width: 30%;" class="border px-2 py-1">HOS's Remarks
+                                        <td style="font-weight:600; width: 30%;" class="border px-2 py-1">Class
+                                            Teacher's Remark</td>
+                                        <td>
+                                            <div id="teacher-remark-container-{{ $studentId }}">
+                                                @php
+                                                    $existingRemark = $this->teacherRemarks[$studentId]->remark ?? null;
+                                                @endphp
+
+                                                @if ($existingRemark)
+                                                    <div class="existing-remark"
+                                                        id="existing-remark-{{ $studentId }}">
+                                                        <span>{{ $existingRemark }}</span>
+                                                        <button type="button"
+                                                            onclick="editRemark({{ $studentId }})"
+                                                            class="ml-2 text-blue-600 hover:text-blue-800 text-sm">
+                                                            Edit
+                                                        </button>
+                                                    </div>
+                                                    <div id="edit-remark-form-{{ $studentId }}" class="hidden">
+                                                        <input type="text" id="remark-input-{{ $studentId }}"
+                                                            class="p-2 w-full rounded border border-gray-300"
+                                                            value="{{ $existingRemark }}"
+                                                            placeholder="Enter your remark for {{ $studentData['info']->name }}"
+                                                            onblur="saveRemark({{ $studentId }}, {{ $record->id }}, this.value)">
+                                                        <div id="remark-error-{{ $studentId }}"
+                                                            class="text-red-500 text-sm mt-1"></div>
+                                                        <div id="remark-success-{{ $studentId }}"
+                                                            class="text-green-500 text-sm mt-1"></div>
+                                                    </div>
+                                                @else
+                                                    <input type="text" id="remark-input-{{ $studentId }}"
+                                                        class="p-2 w-full rounded border border-gray-300"
+                                                        placeholder="Enter your remark for {{ $studentData['info']->name }}"
+                                                        onblur="saveRemark({{ $studentId }}, {{ $record->id }}, this.value)">
+                                                    <div id="remark-error-{{ $studentId }}"
+                                                        class="text-red-500 text-sm mt-1"></div>
+                                                    <div id="remark-success-{{ $studentId }}"
+                                                        class="text-green-500 text-sm mt-1"></div>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight:600; width: 30%;" class="border px-2 py-1">HOS's
+                                            Remarks
                                         </td>
                                         <td>
                                             @php
@@ -413,7 +457,8 @@
                                             <tbody>
                                                 @foreach ($skills as $s)
                                                     <tr>
-                                                        <td class="border px-2 py-1 text-left">{{ $s->category->name }}
+                                                        <td class="border px-2 py-1 text-left">
+                                                            {{ $s->category->name }}
                                                         </td>
                                                         @for ($i = 5; $i >= 1; $i--)
                                                             <td class="border px-2 py-1">
@@ -440,7 +485,8 @@
                                             <tbody>
                                                 @foreach ($behaviours as $b)
                                                     <tr>
-                                                        <td class="border px-2 py-1 text-left">{{ $b->category->name }}
+                                                        <td class="border px-2 py-1 text-left">
+                                                            {{ $b->category->name }}
                                                         </td>
                                                         @for ($i = 5; $i >= 1; $i--)
                                                             <td class="border px-2 py-1">
@@ -462,7 +508,7 @@
                                 <tr>
                                     <td colspan="12" style="padding:15px;">
                                         <div>
-                                            {{ $record->teacher->name ?? ""}}
+                                            {{ $record->teacher->name ?? '' }}
                                             <br>
                                             <b><cite>Class Teacher</cite></b>
 
@@ -537,6 +583,33 @@
             table.skills-behaviours td:first-child {
                 text-align: left;
             }
+
+            .hidden {
+                display: none;
+            }
+
+            .existing-remark {
+                padding: 8px;
+                background-color: #f7fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 4px;
+            }
+
+            .existing-remark span {
+                color: #2d3748;
+            }
+
+            #remark-error {
+                color: #e53e3e;
+                font-size: 0.875rem;
+                margin-top: 4px;
+            }
+
+            #remark-success {
+                color: #38a169;
+                font-size: 0.875rem;
+                margin-top: 4px;
+            }
         </style>
 
         {{-- Tab Switching Script --}}
@@ -563,6 +636,105 @@
                 if (tabs.length > 0) {
                     tabs[0].click();
                 }
+            });
+        </script>
+        <script>
+            // Function to save teacher remark
+            async function saveRemark(studentId, resultRootId, remark) {
+                const errorDiv = document.getElementById(`remark-error-${studentId}`);
+                const successDiv = document.getElementById(`remark-success-${studentId}`);
+                const input = document.getElementById(`remark-input-${studentId}`);
+
+                // Clear previous messages
+                errorDiv.textContent = '';
+                successDiv.textContent = '';
+
+                // Show loading state
+                input.disabled = true;
+
+                try {
+                    const response = await fetch('{{ route('teacher-remark.save') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            student_id: studentId,
+                            result_root_id: resultRootId,
+                            remark: remark
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        successDiv.textContent = 'Remark saved successfully!';
+
+                        // If this was a new remark, show it as existing
+                        if (!document.getElementById(`existing-remark-${studentId}`)) {
+                            const container = document.getElementById(`teacher-remark-container-${studentId}`);
+                            container.innerHTML = `
+                        <div class="existing-remark" id="existing-remark-${studentId}">
+                            <span>${remark}</span>
+                            <button type="button" 
+                                    onclick="editRemark(${studentId})"
+                                    class="ml-2 text-blue-600 hover:text-blue-800 text-sm">
+                                Edit
+                            </button>
+                        </div>
+                        <div id="edit-remark-form-${studentId}" class="hidden">
+                            <input type="text" 
+                                   id="remark-input-${studentId}"
+                                   class="p-2 w-full rounded border border-gray-300"
+                                   value="${remark}"
+                                   placeholder="Enter your remark"
+                                   onblur="saveRemark(${studentId}, ${resultRootId}, this.value)">
+                            <div id="remark-error-${studentId}" class="text-red-500 text-sm mt-1"></div>
+                            <div id="remark-success-${studentId}" class="text-green-500 text-sm mt-1"></div>
+                        </div>
+                    `;
+                        }
+                    } else {
+                        errorDiv.textContent = data.message;
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Failed to save remark. Please try again.';
+                    console.error('Error saving remark:', error);
+                } finally {
+                    input.disabled = false;
+                }
+            }
+
+            // Function to edit existing remark
+            function editRemark(studentId) {
+                const existingRemarkDiv = document.getElementById(`existing-remark-${studentId}`);
+                const editFormDiv = document.getElementById(`edit-remark-form-${studentId}`);
+
+                if (existingRemarkDiv && editFormDiv) {
+                    existingRemarkDiv.classList.add('hidden');
+                    editFormDiv.classList.remove('hidden');
+
+                    // Focus the input field
+                    const input = document.getElementById(`remark-input-${studentId}`);
+                    if (input) {
+                        input.focus();
+                    }
+                }
+            }
+
+            // Optional: Auto-save when Enter key is pressed
+            document.addEventListener('DOMContentLoaded', function() {
+                // This can be added to handle Enter key press
+                document.addEventListener('keypress', function(e) {
+                    if (e.target && e.target.id && e.target.id.startsWith('remark-input-') && e.key ===
+                        'Enter') {
+                        e.preventDefault();
+                        const studentId = e.target.id.replace('remark-input-', '');
+                        const resultRootId = {{ $record->id }};
+                        e.target.blur(); // This will trigger the onblur event
+                    }
+                });
             });
         </script>
     @endassets

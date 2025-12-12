@@ -214,6 +214,23 @@ foreach ($resultUploads as $resultUpload) {
                                         <td>{{ number_format(array_sum(array_column($studentData['subjects'], 'total')) / count($studentData['subjects']), 2) }}
                                         </td>
                                     </tr>
+                                    {{-- Add this row to the remarks table --}}
+                                    <tr>
+                                        <td style="font-weight:600; width: 30%;" class="border px-2 py-1">Class
+                                            Teacher's Remark</td>
+                                        <td>
+                                            @if ($teacherRemark && $teacherRemark->remark)
+                                                <div class="teacher-remark" style="color: #2d3748; font-style: normal;">
+                                                    {{ $teacherRemark->remark }}
+                                                   
+                                                </div>
+                                            @else
+                                                <div style="color: #a0aec0; font-style: italic;">
+                                                    No remark added yet by class teacher
+                                                </div>
+                                            @endif
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td style="font-weight:600; width: 30%;" class="border px-2 py-1">HOS's Remarks
                                         </td>
@@ -394,7 +411,7 @@ foreach ($resultUploads as $resultUpload) {
                                 <tr>
                                     <td colspan="12" style="padding:15px;">
                                         <div>
-                                            {{ $record->teacher->name ?? "" }}
+                                            {{ $record->teacher->name ?? '' }}
                                             <br>
                                             <b><cite>Class Teacher</cite></b>
 

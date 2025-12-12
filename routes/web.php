@@ -17,6 +17,15 @@ use App\Http\Controllers\ResultController;
 //     dd($classes_arr);
 // });
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/teacher-remark/save', [\App\Http\Controllers\TeacherRemarkController::class, 'store'])
+        ->name('teacher-remark.save');
+    
+    Route::get('/teacher-remark/{studentId}/{resultRootId}', [\App\Http\Controllers\TeacherRemarkController::class, 'getRemark'])
+        ->name('teacher-remark.get');
+});
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 // In routes/web.php
 Route::get('/homework/{homework}/download', [HomeworkController::class, 'download'])->name('homework.download');
