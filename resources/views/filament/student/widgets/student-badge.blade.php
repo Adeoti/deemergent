@@ -25,7 +25,7 @@
             <div class="details-column">
                 <h3 class="section-title details-title">Icon Information</h3>
                 <p class="detail-item"><span class="bold">Roll Number:</span> {{ $student->student->roll_number ?? 'N/A' }}</p>
-                <p class="detail-item"><span class="bold">Guardian:</span> {{ $student->student->guardian_name ?? 'N/A' }}</p>
+                <p class="detail-item"><span class="bold">Parent:</span> {{ $student->student->guardian_name ?? 'N/A' }}</p>
                 <p class="detail-item"><span class="bold">Parent Contact:</span> {{ $student->student->parent_contact ?? 'N/A' }}</p>
             </div>
 

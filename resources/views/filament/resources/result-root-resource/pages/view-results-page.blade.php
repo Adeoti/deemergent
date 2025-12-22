@@ -174,7 +174,7 @@
                                         style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
                                 <p class="detail-item"><span class="bold">Roll Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
-                                <p class="detail-item"><span class="bold">Guardian:</span>
+                                <p class="detail-item"><span class="bold">Parent:</span>
                                     {{ $student->student->guardian_name ?? 'N/A' }}</p>
 
 
@@ -361,21 +361,21 @@
                                                     ->where('result_root_id', $record->id)
                                                     ->where('student_id', $studentData['info']->id)
                                                     ->count();
-                                                $totalDays = $record->total_school_days ?? 120; // You might need to set total_school_days somewhere
+                                                $totalDays = $record->total_school_days ?? 120; 
 
                                                 // Calculate attendance percentage
                                                 $attendancePercentage =
                                                     $totalDays > 0 ? round(($presentCount / $totalDays) * 100, 2) : 0;
 
                                                 // Check for poor attendance (less than 80% attendance)
-                                                if ($attendancePercentage < 80) {
-                                                    $attendanceComments = [
-                                                        'Low attendance affected overall performance. Needs to be more regular in school.',
-                                                        'Irregular attendance slowed down progress. Should attend school consistently.',
-                                                        'Attendance needs improvement to achieve better results.',
-                                                    ];
-                                                    $comment = $attendanceComments[array_rand($attendanceComments)];
-                                                } else {
+                                                // if ($attendancePercentage < 80) {
+                                                //     $attendanceComments = [
+                                                //         'Low attendance affected overall performance. Needs to be more regular in school.',
+                                                //         'Irregular attendance slowed down progress. Should attend school consistently.',
+                                                //         'Attendance needs improvement to achieve better results.',
+                                                //     ];
+                                                //     $comment = $attendanceComments[array_rand($attendanceComments)];
+                                                // } else {
                                                     // Use the detailed academic performance comments
                                                     if ($overallAverage >= 90) {
                                                         $comments = [
@@ -426,7 +426,7 @@
                                                         ];
                                                         $comment = $comments[array_rand($comments)];
                                                     }
-                                                }
+                                                // }
                                             @endphp
                                             {{ $comment }}
                                         </td>
