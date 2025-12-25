@@ -124,9 +124,11 @@
                             <div class="text-center">
                                 <h2 class="font-bold" style="font-size: 2.7rem;">{{ $schoolDetails['school_name'] }}
                                 </h2>
-                                <p><b>Address: </b> {{ $record->section_address ?? $schoolDetails['school_address'] }}
+                                <p class="detail-item"><span class="bold"
+                                        style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
+                                {{-- <p><b>Address: </b> {{ $record->section_address ?? $schoolDetails['school_address'] }}
                                 </p>
-                                <p><b>Phone:</b> {{ $schoolDetails['school_phone'] }}</p>
+                                <p><b>Phone:</b> {{ $schoolDetails['school_phone'] }}</p> --}}
                             </div>
                             <div class="student_passport">
                                 <img src="{{ Storage::url($studentData['info']->passport) }}" alt="Logo"
@@ -142,7 +144,7 @@
 
                             <div>
                                 <h2 class="text-xl font-bold">{{ $studentData['info']->name }}</h2>
-                                <p>Student ID: {{ $studentData['info']->id }}</p>
+                                {{-- <p>Student ID: {{ $studentData['info']->id }}</p> --}}
                                 <p>Email: {{ $studentData['info']->email }}</p>
                                 {{-- Count attendance where status = Present and result_root_id = $record->id and student_id = $studentData['info']->id --}}
                                 <p>Attendance:
@@ -170,8 +172,7 @@
 
                             <!-- Student Details Column -->
                             <div class="details-column">
-                                <p class="detail-item"><span class="bold"
-                                        style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
+                              
                                 <p class="detail-item"><span class="bold">Roll Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Parent:</span>
@@ -564,14 +565,14 @@
                 width: 100% !important;
             }
 
-            tr:nth-child(even) {
+            /* tr:nth-child(even) {
                 background-color: #fff;
                 border: none !important;
             }
 
             tr:nth-child(odd) {
                 background-color: #d2eafd;
-            }
+            } */
 
             table.skills-behaviours td,
             table.skills-behaviours th {

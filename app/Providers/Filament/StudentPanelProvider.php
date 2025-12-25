@@ -11,6 +11,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Enums\ThemeMode;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -28,6 +29,8 @@ class StudentPanelProvider extends PanelProvider
             ->id('student')
             ->path('student')
             ->brandName($schoolDetails['school_name'])
+            ->defaultThemeMode(ThemeMode::Light)
+            ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->login()
 

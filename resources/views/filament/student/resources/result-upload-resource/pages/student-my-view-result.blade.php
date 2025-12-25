@@ -68,11 +68,14 @@ foreach ($resultUploads as $resultUpload) {
                             </div>
                             <div class="text-center">
                                 <h2 class="font-bold" style="font-size: 2.7rem;">{{ $schoolDetails['school_name'] }}
+                                    
                                 </h2>
+                                <p class="detail-item"><span class="bold"
+                                        style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
                                 {{-- <p><b>Address: </b> {{ $schoolDetails['school_address'] }}</p> --}}
-                                <p><b>Address: </b> {{ $record->section_address ?? $schoolDetails['school_address'] }}
+                                {{-- <p><b>Address: </b> {{ $record->section_address ?? $schoolDetails['school_address'] }}
                                 </p>
-                                <p><b>Phone:</b> {{ $schoolDetails['school_phone'] }}</p>
+                                <p><b>Phone:</b> {{ $schoolDetails['school_phone'] }}</p> --}}
                             </div>
                             <div class="student_passport">
                                 <img src="{{ Storage::url($studentData['info']->passport) }}" alt="Passport"
@@ -85,7 +88,7 @@ foreach ($resultUploads as $resultUpload) {
 
                             <div>
                                 <h2 class="text-xl font-bold">{{ $studentData['info']->name }}</h2>
-                                <p>Student ID: {{ $studentData['info']->id }}</p>
+                                {{-- <p>Student ID: {{ $studentData['info']->id }}</p> --}}
                                 <p>Email: {{ $studentData['info']->email }}</p>
                                 <p>Attendance:
                                     {{ App\Models\Attendance::where('result_root_id', $record->id)->where('student_id', $studentData['info']->id)->count() }}
@@ -112,14 +115,13 @@ foreach ($resultUploads as $resultUpload) {
 
                             <!-- Student Details Column -->
                             <div class="details-column">
-                                <p class="detail-item"><span class="bold"
-                                        style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
+                                
                                 <p class="detail-item"><span class="bold">Roll Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Parent:</span>
                                     {{ $student->student->guardian_name ?? 'N/A' }}</p>
-                                <p class="detail-item"><span class="bold">Class Teacher:</span>
-                                    {{ $record->teacher->name ?? 'N/A' }}</p>
+                                {{-- <p class="detail-item"><span class="bold">Class Teacher:</span>
+                                    {{ $record->teacher->name ?? 'N/A' }}</p> --}}
                                 <p>Times present:
                                     {{ App\Models\Attendance::where('status', 'Present')->where('result_root_id', $record->id)->where('student_id', $studentData['info']->id)->count() }}
                                 </p>
@@ -459,13 +461,13 @@ foreach ($resultUploads as $resultUpload) {
                 width: 100% !important;
             }
 
-            tr:nth-child(even) {
+            /* tr:nth-child(even) {
                 background-color: #f2f2f2;
             }
 
             tr:nth-child(odd) {
                 background-color: #d2eafd;
-            }
+            } */
 
             table.skills-behaviours td,
             table.skills-behaviours th {
