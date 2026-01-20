@@ -68,7 +68,7 @@ foreach ($resultUploads as $resultUpload) {
                             </div>
                             <div class="text-center">
                                 <h2 class="font-bold" style="font-size: 2.7rem;">{{ $schoolDetails['school_name'] }}
-                                    
+
                                 </h2>
                                 <p class="detail-item"><span class="bold"
                                         style="font-weight: 600; color:darkmagenta;">{{ $record->name }}</span></p>
@@ -115,7 +115,7 @@ foreach ($resultUploads as $resultUpload) {
 
                             <!-- Student Details Column -->
                             <div class="details-column">
-                                
+
                                 <p class="detail-item"><span class="bold">Roll Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Parent:</span>
@@ -224,7 +224,7 @@ foreach ($resultUploads as $resultUpload) {
                                             @if ($teacherRemark && $teacherRemark->remark)
                                                 <div class="teacher-remark" style="color: #2d3748; font-style: normal;">
                                                     {{ $teacherRemark->remark }}
-                                                   
+
                                                 </div>
                                             @else
                                                 <div style="color: #a0aec0; font-style: italic;">
@@ -237,32 +237,29 @@ foreach ($resultUploads as $resultUpload) {
                                         <td style="font-weight:600; width: 30%;" class="border px-2 py-1">HOS's Remarks
                                         </td>
                                         <td>
-                                            @php
-                                                $overallAverage = round(
-                                                    array_sum(array_column($studentData['subjects'], 'total')) /
-                                                        count($studentData['subjects']),
-                                                    2,
-                                                );
-                                                $presentCount = App\Models\Attendance::where('status', 'Present')
-                                                    ->where('result_root_id', $record->id)
-                                                    ->where('student_id', $studentData['info']->id)
-                                                    ->count();
-                                                $totalDays = $record->total_school_days ?? 120;
+                                            @if ($hosRemark && $hosRemark->remark)
+                                                <div class="hos-remark" style="color: #2d3748; font-style: normal;">
+                                                    {{ $hosRemark->remark }}
+                                                </div>
+                                            @else
+                                                @php
+                                                    // Generate default comment (same logic as before)
+                                                    $overallAverage = round(
+                                                        array_sum(array_column($studentData['subjects'], 'total')) /
+                                                            count($studentData['subjects']),
+                                                        2,
+                                                    );
+                                                    $presentCount = App\Models\Attendance::where('status', 'Present')
+                                                        ->where('result_root_id', $record->id)
+                                                        ->where('student_id', $studentData['info']->id)
+                                                        ->count();
+                                                    $totalDays = $record->total_school_days ?? 120;
+                                                    $attendancePercentage =
+                                                        $totalDays > 0
+                                                            ? round(($presentCount / $totalDays) * 100, 2)
+                                                            : 0;
 
-                                                // Calculate attendance percentage
-                                                $attendancePercentage =
-                                                    $totalDays > 0 ? round(($presentCount / $totalDays) * 100, 2) : 0;
-
-                                                // Check for poor attendance (less than 80% attendance)
-                                                // if ($attendancePercentage < 80) {
-                                                //     $attendanceComments = [
-                                                //         'Low attendance affected overall performance. Needs to be more regular in school.',
-                                                //         'Irregular attendance slowed down progress. Should attend school consistently.',
-                                                //         'Attendance needs improvement to achieve better results.',
-                                                //     ];
-                                                //     $comment = $attendanceComments[array_rand($attendanceComments)];
-                                                // } else {
-                                                    // Use the detailed academic performance comments
+                                                    // Generate default comment
                                                     if ($overallAverage >= 90) {
                                                         $comments = [
                                                             'An outstanding performance. Keep maintaining this high academic standard.',
@@ -270,7 +267,7 @@ foreach ($resultUploads as $resultUpload) {
                                                             'A brilliant performance. Continue to remain focused and disciplined.',
                                                             'Exceptional progress. Keep up the excellent attitude towards learning.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     } elseif ($overallAverage >= 80) {
                                                         $comments = [
                                                             'A very good result. With a little more effort, you will reach the top.',
@@ -278,7 +275,7 @@ foreach ($resultUploads as $resultUpload) {
                                                             'You worked hard this term. Maintain this good effort.',
                                                             'A commendable performance. Continue improving.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     } elseif ($overallAverage >= 70) {
                                                         $comments = [
                                                             'A good performance. You can do even better with more consistency.',
@@ -286,7 +283,7 @@ foreach ($resultUploads as $resultUpload) {
                                                             'Your work is good, but there is room for improvement.',
                                                             'Keep improving your study habits for better results.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     } elseif ($overallAverage >= 60) {
                                                         $comments = [
                                                             'An average performance. You need to work harder next term.',
@@ -294,7 +291,7 @@ foreach ($resultUploads as $resultUpload) {
                                                             'You have potential; put in more effort to achieve better results.',
                                                             'Encouraged to work harder. Improvement is needed.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     } elseif ($overallAverage >= 50) {
                                                         $comments = [
                                                             'Below expected performance. Greater effort and concentration are needed.',
@@ -302,7 +299,7 @@ foreach ($resultUploads as $resultUpload) {
                                                             'Work harder to avoid falling behind.',
                                                             'Performance is weak; more dedication is required.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     } else {
                                                         $comments = [
                                                             'Performance is poor. The pupil must work much harder next term.',
@@ -310,11 +307,13 @@ foreach ($resultUploads as $resultUpload) {
                                                             'Much improvement is needed across all subjects.',
                                                             'The performance is far below expectation. Serious effort is required.',
                                                         ];
-                                                        $comment = $comments[array_rand($comments)];
+                                                        $defaultComment = $comments[array_rand($comments)];
                                                     }
-                                                // }
-                                            @endphp
-                                            {{ $comment }}
+                                                @endphp
+                                                <div style="color: #a0aec0; font-style: normal;">
+                                                    {{ $defaultComment }}
+                                                </div>
+                                            @endif
                                         </td>
                                     </tr>
 
@@ -427,7 +426,7 @@ foreach ($resultUploads as $resultUpload) {
 
                                             {{ $schoolDetails['principal_name'] }}
                                             <br>
-                                            <b><cite>HOS</cite></b>
+                                            <b><cite>Principal</cite></b>
 
 
                                         </div>

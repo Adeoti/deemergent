@@ -21,9 +21,16 @@ use App\Http\Controllers\ResultController;
 Route::middleware(['auth'])->group(function () {
     Route::post('/teacher-remark/save', [\App\Http\Controllers\TeacherRemarkController::class, 'store'])
         ->name('teacher-remark.save');
-    
+
     Route::get('/teacher-remark/{studentId}/{resultRootId}', [\App\Http\Controllers\TeacherRemarkController::class, 'getRemark'])
         ->name('teacher-remark.get');
+
+    // HOS remarks routes
+    Route::post('/hos-remark/save', [\App\Http\Controllers\HOSRemarkController::class, 'store'])
+        ->name('hos-remark.save');
+
+    Route::get('/hos-remark/{studentId}/{resultRootId}', [\App\Http\Controllers\HOSRemarkController::class, 'getRemark'])
+        ->name('hos-remark.get');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');

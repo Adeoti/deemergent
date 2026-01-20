@@ -10,6 +10,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Navigation\NavigationItem;
 use Filament\Widgets;
 use Filament\Enums\ThemeMode;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -31,6 +32,13 @@ class StudentPanelProvider extends PanelProvider
             ->brandName($schoolDetails['school_name'])
             ->defaultThemeMode(ThemeMode::Light)
             ->darkMode(false)
+            ->navigationItems([
+                NavigationItem::make('Elearning')
+                    ->url('https://elearn.education.gov.ng/', shouldOpenInNewTab: false)
+                    ->icon('heroicon-o-academic-cap')
+                    ->visible(fn() => true)
+                    ->sort(100),
+            ])
             ->sidebarCollapsibleOnDesktop()
             ->login()
 

@@ -172,7 +172,7 @@
 
                             <!-- Student Details Column -->
                             <div class="details-column">
-                              
+
                                 <p class="detail-item"><span class="bold">Roll Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Parent:</span>
@@ -349,87 +349,133 @@
                                     </tr>
                                     <tr>
                                         <td style="font-weight:600; width: 30%;" class="border px-2 py-1">HOS's
-                                            Remarks
-                                        </td>
+                                            Remarks</td>
                                         <td>
-                                            @php
-                                                $overallAverage = round(
-                                                    array_sum(array_column($studentData['subjects'], 'total')) /
-                                                        count($studentData['subjects']),
-                                                    2,
-                                                );
-                                                $presentCount = App\Models\Attendance::where('status', 'Present')
-                                                    ->where('result_root_id', $record->id)
-                                                    ->where('student_id', $studentData['info']->id)
-                                                    ->count();
-                                                $totalDays = $record->total_school_days ?? 120; 
+                                            <div id="hos-remark-container-{{ $studentId }}">
+                                                @php
+                                                    $existingHOSRemark = $this->hosRemarks[$studentId]->remark ?? null;
+                                                @endphp
 
-                                                // Calculate attendance percentage
-                                                $attendancePercentage =
-                                                    $totalDays > 0 ? round(($presentCount / $totalDays) * 100, 2) : 0;
+                                                @if ($existingHOSRemark)
+                                                    <div class="existing-remark"
+                                                        id="existing-hos-remark-{{ $studentId }}">
+                                                        <span>{{ $existingHOSRemark }}</span>
+                                                        <button type="button"
+                                                            onclick="editHOSRemark({{ $studentId }})"
+                                                            class="ml-2 text-blue-600 hover:text-blue-800 text-sm">
+                                                            Edit
+                                                        </button>
+                                                    </div>
+                                                    <div id="edit-hos-remark-form-{{ $studentId }}"
+                                                        class="hidden">
+                                                        <input type="text"
+                                                            id="hos-remark-input-{{ $studentId }}"
+                                                            class="p-2 w-full rounded border border-gray-300"
+                                                            value="{{ $existingHOSRemark }}"
+                                                            placeholder="Enter HOS remark for {{ $studentData['info']->name }}"
+                                                            onblur="saveHOSRemark({{ $studentId }}, {{ $record->id }}, this.value)">
+                                                        <div id="hos-remark-error-{{ $studentId }}"
+                                                            class="text-red-500 text-sm mt-1"></div>
+                                                        <div id="hos-remark-success-{{ $studentId }}"
+                                                            class="text-green-500 text-sm mt-1"></div>
+                                                    </div>
+                                                @else
+                                                    @php
+                                                        // Generate default comment based on performance (same logic as before)
+                                                        $overallAverage = round(
+                                                            array_sum(array_column($studentData['subjects'], 'total')) /
+                                                                count($studentData['subjects']),
+                                                            2,
+                                                        );
+                                                        $presentCount = App\Models\Attendance::where(
+                                                            'status',
+                                                            'Present',
+                                                        )
+                                                            ->where('result_root_id', $record->id)
+                                                            ->where('student_id', $studentData['info']->id)
+                                                            ->count();
+                                                        $totalDays = $record->total_school_days ?? 120;
+                                                        $attendancePercentage =
+                                                            $totalDays > 0
+                                                                ? round(($presentCount / $totalDays) * 100, 2)
+                                                                : 0;
 
-                                                // Check for poor attendance (less than 80% attendance)
-                                                // if ($attendancePercentage < 80) {
-                                                //     $attendanceComments = [
-                                                //         'Low attendance affected overall performance. Needs to be more regular in school.',
-                                                //         'Irregular attendance slowed down progress. Should attend school consistently.',
-                                                //         'Attendance needs improvement to achieve better results.',
-                                                //     ];
-                                                //     $comment = $attendanceComments[array_rand($attendanceComments)];
-                                                // } else {
-                                                    // Use the detailed academic performance comments
-                                                    if ($overallAverage >= 90) {
-                                                        $comments = [
-                                                            'An outstanding performance. Keep maintaining this high academic standard.',
-                                                            'Excellent result! You have shown great commitment and hard work. Well done.',
-                                                            'A brilliant performance. Continue to remain focused and disciplined.',
-                                                            'Exceptional progress. Keep up the excellent attitude towards learning.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    } elseif ($overallAverage >= 80) {
-                                                        $comments = [
-                                                            'A very good result. With a little more effort, you will reach the top.',
-                                                            'Strong performance. Keep putting in your best.',
-                                                            'You worked hard this term. Maintain this good effort.',
-                                                            'A commendable performance. Continue improving.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    } elseif ($overallAverage >= 70) {
-                                                        $comments = [
-                                                            'A good performance. You can do even better with more consistency.',
-                                                            'You tried well. Aim for higher achievement next term.',
-                                                            'Your work is good, but there is room for improvement.',
-                                                            'Keep improving your study habits for better results.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    } elseif ($overallAverage >= 60) {
-                                                        $comments = [
-                                                            'An average performance. You need to work harder next term.',
-                                                            'Fair performance. Focus more during lessons to improve.',
-                                                            'You have potential; put in more effort to achieve better results.',
-                                                            'Encouraged to work harder. Improvement is needed.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    } elseif ($overallAverage >= 50) {
-                                                        $comments = [
-                                                            'Below expected performance. Greater effort and concentration are needed.',
-                                                            'Needs improvement. Encourage more seriousness with studies.',
-                                                            'Work harder to avoid falling behind.',
-                                                            'Performance is weak; more dedication is required.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    } else {
-                                                        $comments = [
-                                                            'Performance is poor. The pupil must work much harder next term.',
-                                                            'A weak result. Encourage extra support and more study time.',
-                                                            'Much improvement is needed across all subjects.',
-                                                            'The performance is far below expectation. Serious effort is required.',
-                                                        ];
-                                                        $comment = $comments[array_rand($comments)];
-                                                    }
-                                                // }
-                                            @endphp
-                                            {{ $comment }}
+                                                        // Generate default comment
+                                                        if ($overallAverage >= 90) {
+                                                            $comments = [
+                                                                'An outstanding performance. Keep maintaining this high academic standard.',
+                                                                'Excellent result! You have shown great commitment and hard work. Well done.',
+                                                                'A brilliant performance. Continue to remain focused and disciplined.',
+                                                                'Exceptional progress. Keep up the excellent attitude towards learning.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        } elseif ($overallAverage >= 80) {
+                                                            $comments = [
+                                                                'A very good result. With a little more effort, you will reach the top.',
+                                                                'Strong performance. Keep putting in your best.',
+                                                                'You worked hard this term. Maintain this good effort.',
+                                                                'A commendable performance. Continue improving.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        } elseif ($overallAverage >= 70) {
+                                                            $comments = [
+                                                                'A good performance. You can do even better with more consistency.',
+                                                                'You tried well. Aim for higher achievement next term.',
+                                                                'Your work is good, but there is room for improvement.',
+                                                                'Keep improving your study habits for better results.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        } elseif ($overallAverage >= 60) {
+                                                            $comments = [
+                                                                'An average performance. You need to work harder next term.',
+                                                                'Fair performance. Focus more during lessons to improve.',
+                                                                'You have potential; put in more effort to achieve better results.',
+                                                                'Encouraged to work harder. Improvement is needed.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        } elseif ($overallAverage >= 50) {
+                                                            $comments = [
+                                                                'Below expected performance. Greater effort and concentration are needed.',
+                                                                'Needs improvement. Encourage more seriousness with studies.',
+                                                                'Work harder to avoid falling behind.',
+                                                                'Performance is weak; more dedication is required.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        } else {
+                                                            $comments = [
+                                                                'Performance is poor. The pupil must work much harder next term.',
+                                                                'A weak result. Encourage extra support and more study time.',
+                                                                'Much improvement is needed across all subjects.',
+                                                                'The performance is far below expectation. Serious effort is required.',
+                                                            ];
+                                                            $defaultComment = $comments[array_rand($comments)];
+                                                        }
+                                                    @endphp
+
+                                                    <div class="existing-remark"
+                                                        id="existing-hos-remark-{{ $studentId }}"
+                                                        style="display: none;">
+                                                        <span></span>
+                                                        <button type="button"
+                                                            onclick="editHOSRemark({{ $studentId }})"
+                                                            class="ml-2 text-blue-600 hover:text-blue-800 text-sm">
+                                                            Edit
+                                                        </button>
+                                                    </div>
+                                                    <div id="edit-hos-remark-form-{{ $studentId }}">
+                                                        <input type="text"
+                                                            id="hos-remark-input-{{ $studentId }}"
+                                                            class="p-2 w-full rounded border border-gray-300"
+                                                            value="{{ $defaultComment }}"
+                                                            placeholder="Enter HOS remark for {{ $studentData['info']->name }}"
+                                                            onblur="saveHOSRemark({{ $studentId }}, {{ $record->id }}, this.value)">
+                                                        <div id="hos-remark-error-{{ $studentId }}"
+                                                            class="text-red-500 text-sm mt-1"></div>
+                                                        <div id="hos-remark-success-{{ $studentId }}"
+                                                            class="text-green-500 text-sm mt-1"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
 
@@ -566,13 +612,13 @@
             }
 
             /* tr:nth-child(even) {
-                background-color: #fff;
-                border: none !important;
-            }
+                        background-color: #fff;
+                        border: none !important;
+                    }
 
-            tr:nth-child(odd) {
-                background-color: #d2eafd;
-            } */
+                    tr:nth-child(odd) {
+                        background-color: #d2eafd;
+                    } */
 
             table.skills-behaviours td,
             table.skills-behaviours th {
@@ -724,7 +770,6 @@
                 }
             }
 
-            // Optional: Auto-save when Enter key is pressed
             document.addEventListener('DOMContentLoaded', function() {
                 // This can be added to handle Enter key press
                 document.addEventListener('keypress', function(e) {
@@ -737,6 +782,83 @@
                     }
                 });
             });
+
+
+
+            // Function to save HOS remark
+            async function saveHOSRemark(studentId, resultRootId, remark) {
+                const errorDiv = document.getElementById(`hos-remark-error-${studentId}`);
+                const successDiv = document.getElementById(`hos-remark-success-${studentId}`);
+                const input = document.getElementById(`hos-remark-input-${studentId}`);
+
+                // Clear previous messages
+                errorDiv.textContent = '';
+                successDiv.textContent = '';
+
+                // Show loading state
+                input.disabled = true;
+
+                try {
+                    const response = await fetch('{{ route('hos-remark.save') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            student_id: studentId,
+                            result_root_id: resultRootId,
+                            remark: remark
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        successDiv.textContent = 'HOS remark saved successfully!';
+
+                        // If this was a new remark, show it as existing
+                        if (!document.getElementById(`existing-hos-remark-${studentId}`).style.display) {
+                            const existingDiv = document.getElementById(`existing-hos-remark-${studentId}`);
+                            const span = existingDiv.querySelector('span');
+                            if (span) {
+                                span.textContent = remark;
+                            }
+                            existingDiv.style.display = 'block';
+                        } else {
+                            const span = document.querySelector(`#existing-hos-remark-${studentId} span`);
+                            if (span) {
+                                span.textContent = remark;
+                            }
+                        }
+                    } else {
+                        errorDiv.textContent = data.message;
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Failed to save HOS remark. Please try again.';
+                    console.error('Error saving HOS remark:', error);
+                } finally {
+                    input.disabled = false;
+                }
+            }
+
+            // Function to edit existing HOS remark
+            function editHOSRemark(studentId) {
+                const existingRemarkDiv = document.getElementById(`existing-hos-remark-${studentId}`);
+                const editFormDiv = document.getElementById(`edit-hos-remark-form-${studentId}`);
+
+                if (existingRemarkDiv && editFormDiv) {
+                    existingRemarkDiv.classList.add('hidden');
+                    editFormDiv.classList.remove('hidden');
+
+                    // Focus the input field
+                    const input = document.getElementById(`hos-remark-input-${studentId}`);
+                    if (input) {
+                        input.focus();
+                        input.select();
+                    }
+                }
+            }
         </script>
     @endassets
 </x-filament-panels::page>

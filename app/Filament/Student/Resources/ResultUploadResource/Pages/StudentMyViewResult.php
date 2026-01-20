@@ -19,6 +19,7 @@ class StudentMyViewResult extends Page
     public $resultUploads;
     public $resultRoot;
     public $teacherRemark;
+    public $hosRemark;
 
     public function mount(ResultRoot $record)
     {
@@ -27,9 +28,13 @@ class StudentMyViewResult extends Page
 
         // Fetch result uploads for the specific result root record
         $this->resultUploads = ResultUpload::where('result_root_id', $this->record->id)->get();
-        
+
         // Load teacher remark for the logged-in student for this result root
         $this->teacherRemark = TeacherRemark::where('student_id', auth()->id())
+            ->where('result_root_id', $record->id)
+            ->first();
+
+        $this->hosRemark = \App\Models\HOSRemark::where('student_id', auth()->id())
             ->where('result_root_id', $record->id)
             ->first();
     }
