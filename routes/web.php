@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\HomeworkController;
 use App\Http\Controllers\ReportCardPdfController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\ResultUploadController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -19,6 +20,28 @@ use App\Http\Controllers\ResultController;
 
 
 Route::middleware(['auth'])->group(function () {
+     // BROADSHEET ROUTES
+    Route::get('/admin/broadsheets/{record}/view', 
+        [App\Http\Controllers\BroadsheetController::class, 'view'])
+        ->name('filament.admin.resources.broadsheets.view');
+    
+    Route::post('/admin/broadsheets/{record}/regenerate', 
+        [App\Http\Controllers\BroadsheetController::class, 'regenerate'])
+        ->name('broadcast.regenerate');
+    
+    Route::get('/admin/broadsheets/{record}/download', 
+        [App\Http\Controllers\BroadsheetController::class, 'downloadPdf'])
+        ->name('broadcast.download');
+    Route::post('/admin/result-uploads/manual-save', [ResultUploadController::class, 'saveManualEntry'])
+        ->name('filament.admin.resources.result-uploads.manual-save');
+
+
+    Route::get('/admin/result-uploads/manual-entry', \App\Filament\Resources\ResultUploadResource\Pages\ManualEntryPage::class)
+        ->name('filament.admin.resources.result-uploads.manual-entry');
+
+    Route::post('/admin/result-uploads/manual-save', [\App\Filament\Resources\ResultUploadResource\Pages\ManualEntryPage::class, 'saveManualEntry'])
+        ->name('manual-result-entry.save');
+
     Route::post('/teacher-remark/save', [\App\Http\Controllers\TeacherRemarkController::class, 'store'])
         ->name('teacher-remark.save');
 

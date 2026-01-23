@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Student;
-use App\Models\Branch; // Ensure Branch is imported
+use App\Models\Branch; 
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -91,7 +91,7 @@ class StudentResource extends Resource
 
                         TextInput::make('roll_number')
                             ->label('Registration Number')
-                            ->unique(Student::class, 'roll_number')
+                            ->unique(Student::class, 'roll_number', ignoreRecord: true)
                             ->required(),
                         DatePicker::make('admission_date')
                             ->label('Admission Date')

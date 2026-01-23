@@ -173,7 +173,7 @@
                             <!-- Student Details Column -->
                             <div class="details-column">
 
-                                <p class="detail-item"><span class="bold">Roll Number:</span>
+                                <p class="detail-item"><span class="bold">Admission Number:</span>
                                     {{ $student->student->roll_number ?? 'N/A' }}</p>
                                 <p class="detail-item"><span class="bold">Parent:</span>
                                     {{ $student->student->guardian_name ?? 'N/A' }}</p>

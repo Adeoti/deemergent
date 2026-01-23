@@ -13,6 +13,7 @@ class SchoolClass extends Model
 {
     //
 
+
     protected $table = "classes";
     public function homeworks()
     {
