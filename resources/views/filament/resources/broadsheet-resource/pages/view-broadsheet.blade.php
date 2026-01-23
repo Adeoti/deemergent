@@ -304,9 +304,9 @@
                             <th class="sticky-left bg-gray-100" style="min-width: 180px;">
                                 Student Name
                             </th>
-                            <th class="bg-gray-100" style="min-width: 80px;">
+                            {{-- <th class="bg-gray-100" style="min-width: 80px;">
                                 Roll No.
-                            </th>
+                            </th> --}}
                             
                             @foreach ($broadsheetData['subjects'] ?? [] as $subjectId => $subjectName)
                                 @php
@@ -316,7 +316,7 @@
                                 @endphp
                                 <th class="subject-header subject-tooltip" data-fullname="{{ $subjectName }}" title="{{ $subjectName }}">
                                     <div class="font-bold text-sm">{{ $subjectAbbr }}</div>
-                                    <div class="text-xs text-gray-600 font-normal">Sc | Gr</div>
+                                    <div class="text-xs text-gray-600 font-normal"><span title="Score">Sc</span> | <span title="Grade">Gr</span></div>
                                 </th>
                             @endforeach
                             
@@ -354,9 +354,9 @@
                                 <td class="sticky-left bg-white font-medium text-gray-900">
                                     {{ $student['name'] }}
                                 </td>
-                                <td class="font-mono text-sm">
+                                {{-- <td class="font-mono text-sm">
                                     {{ $student['roll_number'] }}
-                                </td>
+                                </td> --}}
                                 
                                 @foreach ($broadsheetData['subjects'] ?? [] as $subjectId => $subjectName)
                                     <td>
@@ -619,10 +619,13 @@
                     <div class="flex flex-wrap justify-center items-center gap-4 mb-2">
                         <span><i class="fas fa-phone-alt mr-1"></i> {{ $schoolDetails['school_phone'] ?? 'Phone: N/A' }}</span>
                         <span>•</span>
-                        <span><i class="fas fa-envelope mr-1"></i> {{ $schoolDetails['school_email'] ?? 'Email: N/A' }}</span>
+                        <span><i class="fas fa-envelope mr-1"></i> {{ $schoolDetails['school_email'] ?? 'Email: info@'.config('app.url') }}</span>
                         @if(isset($schoolDetails['school_website']) && $schoolDetails['school_website'])
                             <span>•</span>
-                            <span><i class="fas fa-globe mr-1"></i> {{ $schoolDetails['school_website'] ?? '' }}</span>
+                            <span><i class="fas fa-globe mr-1"></i> {{ $schoolDetails['school_website'] ?? 'Website: '.config('app.url') }}</span>
+                        @else
+                            <span>•</span>
+                            <span><i class="fas fa-globe mr-1"></i> Website: {{ config('app.url') }}</span>
                         @endif
                     </div>
                     <p class="text-xs italic">Computer generated document • Official copy available on request</p>
