@@ -51,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 //Pages\Dashboard::class,
                 AdminCustomDashboard::class,
-                ViewBroadsheet::class,
+                // ViewBroadsheet::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

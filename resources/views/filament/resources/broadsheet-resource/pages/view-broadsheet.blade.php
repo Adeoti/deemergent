@@ -271,14 +271,14 @@
                     <div class="w-4/6 text-center">
                         <h1 class="text-3xl font-bold text-red-700 mb-1">{{ $schoolDetails['school_name'] ?? 'School Name' }}</h1>
                         <div class="text-gray-600 mb-1">{{ $schoolDetails['school_address'] ?? 'School Address' }}</div>
-                        <div class="text-gray-600 mb-3">{{ $schoolDetails['school_phone'] ?? 'Phone: N/A' }} | {{ $schoolDetails['school_email'] ?? 'Email: N/A' }}</div>
+                        <div class="text-gray-600 mb-3">{{ $schoolDetails['school_phone'] ?? 'Phone: N/A' }} | {{ $schoolDetails['school_email'] ?? 'Email: info@'.config('app.url') }}</div>
                         
                         <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $record->name }}</h2>
                         
                         <div class="flex justify-center items-center gap-6 text-sm text-gray-700">
                             <div><i class="fas fa-graduation-cap mr-1"></i> Class: {{ $classInfo->name ?? 'N/A' }}</div>
                             <div><i class="fas fa-calendar-alt mr-1"></i> Term: {{ $record->term ?? 'N/A' }}</div>
-                            <div><i class="fas fa-clock mr-1"></i> Session: {{ $record->session ?? 'N/A' }}</div>
+                            {{-- <div><i class="fas fa-clock mr-1"></i> Session: {{ $record->session ?? 'N/A' }}</div> --}}
                             <div><i class="fas fa-users mr-1"></i> Students: {{ $broadsheetData['total_students'] ?? 0 }}</div>
                         </div>
                     </div>
@@ -422,7 +422,7 @@
                                 $lowestTotal = min(array_column($broadsheetData['students'], 'total'));
                             @endphp
                             <tr class="summary-highlight">
-                                <td colspan="3" class="font-bold text-left pl-4">
+                                <td colspan="2" class="font-bold text-left pl-4">
                                     CLASS SUMMARY
                                 </td>
                                 
@@ -488,11 +488,54 @@
                                 }
                             }
                             $totalGrades = array_sum($gradeDistribution);
+                            
+                            // Calculate percentages and ensure they sum to exactly 100%
+                            $percentages = [];
+                            $remainingPercentage = 100;
+                            $remainingGrades = count($gradeDistribution);
+                            
+                            // First pass: calculate raw percentages
+                            foreach ($gradeDistribution as $grade => $count) {
+                                $percentage = $totalGrades > 0 ? ($count / $totalGrades) * 100 : 0;
+                                $percentages[$grade] = $percentage;
+                            }
+                            
+                            // Second pass: round and adjust to ensure sum is exactly 100%
+                            $roundedPercentages = [];
+                            $roundedSum = 0;
+                            
+                            // Round each percentage to 1 decimal place
+                            foreach ($percentages as $grade => $percentage) {
+                                $rounded = round($percentage, 1);
+                                $roundedPercentages[$grade] = $rounded;
+                                $roundedSum += $rounded;
+                            }
+                            
+                            // Adjust if sum is not 100%
+                            if ($roundedSum != 100) {
+                                $difference = 100 - $roundedSum;
+                                // Find the grade with the largest fractional part to adjust
+                                $largestFractionGrade = '';
+                                $largestFraction = -1;
+                                
+                                foreach ($percentages as $grade => $percentage) {
+                                    $fraction = $percentage - floor($percentage);
+                                    if ($fraction > $largestFraction) {
+                                        $largestFraction = $fraction;
+                                        $largestFractionGrade = $grade;
+                                    }
+                                }
+                                
+                                // Adjust the grade with the largest fractional part
+                                if ($largestFractionGrade) {
+                                    $roundedPercentages[$largestFractionGrade] += $difference;
+                                }
+                            }
                         @endphp
                         
                         @foreach($gradeDistribution as $grade => $count)
                             @php
-                                $percentage = $totalGrades > 0 ? round(($count / $totalGrades) * 100, 1) : 0;
+                                $percentage = $roundedPercentages[$grade] ?? 0;
                                 $gradeColor = [
                                     'A' => 'bg-green-100 text-green-800 border-green-300',
                                     'B' => 'bg-blue-100 text-blue-800 border-blue-300',
@@ -515,7 +558,7 @@
                                                               (str_contains($gradeColor, 'orange') ? 'bg-orange-500' : 'bg-red-500'))) }}" 
                                              style="width: {{ $percentage }}%"></div>
                                     </div>
-                                    <div class="text-xs mt-1">{{ $percentage }}%</div>
+                                    <div class="text-xs mt-1">{{ number_format($percentage, 1) }}%</div>
                                 </div>
                             </div>
                         @endforeach

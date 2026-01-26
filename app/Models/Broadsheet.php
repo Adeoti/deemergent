@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class Broadsheet extends Model
 {
@@ -88,6 +89,7 @@ class Broadsheet extends Model
             ];
 
             $studentTotal = 0;
+            $subjectsWithScores = 0; // Track how many subjects the student actually has scores for
 
             // Process each subject
             foreach ($subjects as $subject) {
@@ -108,19 +110,33 @@ class Broadsheet extends Model
                 }
 
                 // Calculate average if multiple uploads exist for the same subject
-                $subjectScore = $subjectCount > 0 ? ($subjectTotal / $subjectCount) : 0;
-                $studentData['subjects'][$subjectId] = [
-                    'subject_id' => $subjectId,
-                    'subject_name' => $subject->name,
-                    'score' => round($subjectScore, 2),
-                    'grade' => $this->calculateGrade($subjectScore),
-                ];
+                if ($subjectCount > 0) {
+                    $subjectScore = $subjectTotal / $subjectCount;
+                    $studentData['subjects'][$subjectId] = [
+                        'subject_id' => $subjectId,
+                        'subject_name' => $subject->name,
+                        'score' => round($subjectScore, 2),
+                        'grade' => $this->calculateGrade($subjectScore),
+                    ];
 
-                $studentTotal += $subjectScore;
+                    $studentTotal += $subjectScore;
+                    $subjectsWithScores++; // Only count subjects where student has scores
+                } else {
+                    // Student doesn't have scores for this subject
+                    $studentData['subjects'][$subjectId] = [
+                        'subject_id' => $subjectId,
+                        'subject_name' => $subject->name,
+                        'score' => 0,
+                        'grade' => $this->calculateGrade(0),
+                    ];
+                }
             }
 
             $studentData['total'] = round($studentTotal, 2);
-            $studentData['average'] = count($subjects) > 0 ? round($studentTotal / count($subjects), 2) : 0;
+            
+            // FIXED: Calculate average based on subjects where student actually has scores
+            // Only divide by $subjectsWithScores, not total subjects in class
+            $studentData['average'] = $subjectsWithScores > 0 ? round($studentTotal / $subjectsWithScores, 2) : 0;
             
             $broadsheetData[] = $studentData;
         }
