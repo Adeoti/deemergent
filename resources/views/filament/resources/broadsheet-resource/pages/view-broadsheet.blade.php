@@ -640,21 +640,7 @@
                         </div>
                     </div>
                     
-                    <!-- Signatures -->
-                    <div class="pt-4">
-                        <div class="space-y-6">
-                            <div class="text-center">
-                                <div class="signature-line mx-auto" style="width: 80%;"></div>
-                                <p class="text-sm font-bold text-gray-800 mt-2">Class Teacher</p>
-                                <p class="text-xs text-gray-600">{{ $record->creator->name ?? 'N/A' }}</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="signature-line mx-auto" style="width: 80%;"></div>
-                                <p class="text-sm font-bold text-gray-800 mt-2">Principal</p>
-                                <p class="text-xs text-gray-600">{{ $schoolDetails['principal_name'] ?? 'N/A' }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
                 
                 <!-- Footer Note -->
