@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use App\Filament\Resources\ResultRootResource\RelationManagers;
 use App\Filament\Resources\ResultRootResource\Pages\ViewResultsPage;
+use Faker\Core\File;
+use Filament\Forms\Components\FileUpload;
 
 class ResultRootResource extends Resource
 {
@@ -56,29 +58,43 @@ class ResultRootResource extends Resource
                         DatePicker::make('next_term')
                             ->required()
                             ->label('Next Term Begins'),
-
-                        Select::make('teacher_id')
-                            ->label('Class Teacher')
-                            ->options(function () {
-                                return \App\Models\User::whereHas('teacher')->pluck('name', 'id');
-                            })
-                            ->searchable()
-                            ->required(),
-                        
                         Forms\Components\Textarea::make('description')
                             ->required()
                             ->columnSpanFull(),
+
+                        Select::make('term')
+                            ->label('Term')
+                            ->options(ResultRoot::termOptions())
+                            ->required()
+                            ->native(false)
+                            ->searchable(false),
+
+                        Select::make('academic_session')
+                            ->label('Academic Session')
+                            ->options(ResultRoot::academicSessionOptions())
+                            ->required()
+                            ->native(false)
+                            ->searchable()
+                            ->default(function () {
+                                // Best-effort default: guess the "current" session based on today's date.
+                                // Nigerian academic sessions typically start around September.
+                                $year = now()->month >= 9 ? now()->year : now()->year - 1;
+                                return $year . '/' . ($year + 1);
+                            }),
+
                         Select::make('branch_ids')
                             ->label('Branches')
                             ->required()
                             ->options(Branch::all()->pluck('name', 'id'))
-                            ->multiple()
-                            ->columnSpanFull(),
+                            ->multiple(),
                         Textarea::make('section_address')
                             ->label('Section Address')
-                            ->required()
                             ->placeholder('Enter the address of the section (e.g., Senior Section, 123 Main St, City, Country)')
                             ->helperText('This address will appear on the result sheets to identify the section.')
+                            ->columnSpanFull(),
+                        FileUpload::make('logo')
+                            ->label('Section Logo')
+                            ->image()
                             ->columnSpanFull(),
 
                         Section::make('Exam Score Columns')
@@ -89,23 +105,23 @@ class ResultRootResource extends Resource
                                     ->label('exam score columns')
                                     ->schema([
                                         TextInput::make('label')->label('Column Label')->placeholder('E.g. 1st CA')->required(),
-                                        TextInput::make('overall_score')->label('Overall Score')->placeholder('E.g. 100')->required(),
+                                        TextInput::make('overall_score')->label('Overall Score')->numeric()->placeholder('E.g. 100')->required(),
 
                                     ])
                                     ->columns(2)
                                     ->columnSpanFull(),
                             ])
 
-                    ])->columns(4),
+                    ])->columns(3),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                ResultRoot::query()->orderBy('created_at', 'desc')
-            )
+            // Order by created_at descending by default
+            ->defaultSort('created_at', 'desc')
+
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->description(function (ResultRoot $record) {
@@ -124,6 +140,16 @@ class ResultRootResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('term')
+                    ->label('Term')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('academic_session')
+                    ->label('Session')
+                    ->sortable()
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -140,7 +166,10 @@ class ResultRootResource extends Resource
                     ->button()
                     ->color('purple')
                     ->label('View Results')
-                    ->action(fn(ResultRoot $record) => redirect()->route('filament.admin.resources.result-roots.view-results', ['record' => $record->id])),
+                    ->url(fn(ResultRoot $record): string => route('report-cards.show', ['record' => $record->id]))
+                    ->openUrlInNewTab(),
+                // ->action(fn(ResultRoot $record) => redirect()->route('filament.admin.resources.result-roots.view-results', ['record' => $record->id])),
+
                 Tables\Actions\Action::make('CSV template')
                     ->label('Generate CSV Template')
                     ->icon('heroicon-s-arrow-down-tray')

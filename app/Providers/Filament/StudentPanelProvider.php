@@ -38,6 +38,12 @@ class StudentPanelProvider extends PanelProvider
                     ->icon('heroicon-o-academic-cap')
                     ->visible(fn() => true)
                     ->sort(100),
+                NavigationItem::make('Cummulative Reports')
+                    ->icon('heroicon-o-document-text')
+                    ->group('Exams')
+                    ->url(fn() => route('student.cumulative-reports.select'))  
+                    ->sort(1)
+                    ->isActiveWhen(fn(): bool => request()->routeIs('student.cumulative-reports.select')),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->login()

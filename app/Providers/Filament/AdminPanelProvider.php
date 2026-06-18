@@ -9,6 +9,7 @@ use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -57,6 +58,14 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Cummulative Reports')
+                    ->icon('heroicon-o-document-text')
+                    ->group('Examinations')
+                    ->url(fn() => route('cumulative-reports.select'))  
+                    ->sort(1)
+                    ->isActiveWhen(fn(): bool => request()->routeIs('cumulative-reports.select')),
             ])
             ->middleware([
                 EncryptCookies::class,
