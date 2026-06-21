@@ -138,20 +138,39 @@
                 </div>
 
                 {{-- Cumulative Subjects Table --}}
+                @php
+                    // "1st Term" and "2nd Term" get simple columns; "3rd Term" is replaced by a
+                    // spanning group showing its dynamic CSV columns (1st CA, 2nd CA, Exam, etc.)
+                    // plus a "3rd Term Summary" sub-column for that term's total.
+                    $simpleTerms = array_filter($allTerms, fn($t) => $t !== '3rd Term');
+                    $thirdTermColCount = count($thirdTermHeaders) + 1; // +1 for "3rd Term Summary"
+                @endphp
                 <table class="w-full border-collapse border border-gray-300 text-left">
                     <thead>
                         <tr class="table-head">
-                            <th class="border px-2 py-1" rowspan="2">SUBJECTS</th>
-                            @foreach ($allTerms as $term)
-                                <th class="border px-2 py-1 text-center">{{ $term }}</th>
+                            <th class="border px-2 py-1" rowspan="3">SUBJECTS</th>
+                            @foreach ($simpleTerms as $term)
+                                <th class="border px-2 py-1 text-center" rowspan="2">{{ $term }}</th>
                             @endforeach
-                            <th class="border px-2 py-1 text-center annual-col">Annual Summary</th>
-                            <th class="border px-2 py-1 text-center annual-col">Annual Average</th>
+                            <th class="border px-2 py-1 text-center" colspan="{{ $thirdTermColCount }}">3RD TERM</th>
+                            <th class="border px-2 py-1 text-center annual-col" rowspan="2">Annual Summary</th>
+                            <th class="border px-2 py-1 text-center annual-col" rowspan="2">Annual Average</th>
+                            <th class="border px-2 py-1 text-center" rowspan="3">3rd Term Remark</th>
+                        </tr>
+                        <tr class="table-head">
+                            @foreach ($thirdTermHeaders as $header)
+                                <th class="border px-2 py-1 text-center text-xs">{{ $header }}</th>
+                            @endforeach
+                            <th class="border px-2 py-1 text-center text-xs">3rd Term Summary</th>
                         </tr>
                         <tr class="percent-row">
-                            @foreach ($allTerms as $term)
+                            @foreach ($simpleTerms as $term)
                                 <th class="border px-2 py-1 text-center">100%</th>
                             @endforeach
+                            @foreach ($thirdTermHeaders as $header)
+                                <th class="border px-2 py-1 text-center">&nbsp;</th>
+                            @endforeach
+                            <th class="border px-2 py-1 text-center">100%</th>
                             <th class="border px-2 py-1 text-center">{{ count($allTerms) * 100 }}%</th>
                             <th class="border px-2 py-1 text-center">100%</th>
                         </tr>
@@ -163,7 +182,9 @@
                             @endphp
                             <tr>
                                 <td class="border px-2 py-1 font-medium">{{ $subjectName }}</td>
-                                @foreach ($allTerms as $term)
+
+                                {{-- 1st / 2nd Term simple columns --}}
+                                @foreach ($simpleTerms as $term)
                                     <td class="border px-2 py-1 text-center">
                                         @if (($subjectData['per_term'][$term] ?? null) !== null)
                                             {{ $subjectData['per_term'][$term] }}
@@ -173,6 +194,24 @@
                                         @endif
                                     </td>
                                 @endforeach
+
+                                {{-- 3rd Term dynamic breakdown columns --}}
+                                @foreach ($thirdTermHeaders as $header)
+                                    <td class="border px-2 py-1 text-center">
+                                        {{ $subjectData['third_term_scores'][$header] ?? '-' }}
+                                    </td>
+                                @endforeach
+
+                                {{-- 3rd Term Summary (its total, same value as per_term['3rd Term']) --}}
+                                <td class="border px-2 py-1 text-center">
+                                    @if (($subjectData['per_term']['3rd Term'] ?? null) !== null)
+                                        {{ $subjectData['per_term']['3rd Term'] }}
+                                        <span class="text-xs text-gray-500">(100%)</span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
                                 <td class="border px-2 py-1 text-center annual-col">
                                     @if (($subjectData['annual_summary'] ?? null) !== null)
                                         {{ $subjectData['annual_summary'] }}
@@ -184,13 +223,16 @@
                                 <td class="border px-2 py-1 text-center annual-col">
                                     {{ $subjectData['annual_average'] ?? '-' }}
                                 </td>
+                                <td class="border px-2 py-1 text-center">
+                                    {{ $subjectData['third_term_remark'] ?? '-' }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr class="table-head">
                             <td class="border px-2 py-1">OVERALL</td>
-                            @foreach ($allTerms as $term)
+                            @foreach ($simpleTerms as $term)
                                 <td class="border px-2 py-1 text-center">
                                     @if (($studentData['overall']['per_term'][$term] ?? null) !== null)
                                         {{ $studentData['overall']['per_term'][$term] }}
@@ -200,6 +242,17 @@
                                     @endif
                                 </td>
                             @endforeach
+                            @if ($thirdTermColCount - 1 > 0)
+                                <td class="border px-2 py-1 text-center" colspan="{{ $thirdTermColCount - 1 }}"></td>
+                            @endif
+                            <td class="border px-2 py-1 text-center">
+                                @if (($studentData['overall']['per_term']['3rd Term'] ?? null) !== null)
+                                    {{ $studentData['overall']['per_term']['3rd Term'] }}
+                                    <span class="text-xs" style="color:#777;">(100%)</span>
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="border px-2 py-1 text-center annual-col" style="color:#056b05;">
                                 @if (($studentData['overall']['annual_summary'] ?? null) !== null)
                                     {{ $studentData['overall']['annual_summary'] }}
@@ -211,17 +264,30 @@
                             <td class="border px-2 py-1 text-center annual-col" style="color:#056b05;">
                                 {{ $studentData['overall']['annual_average'] ?? '-' }}
                             </td>
+                            <td class="border px-2 py-1 text-center"></td>
+                        </tr>
+                        <tr class="table-head">
+                            <td class="border px-2 py-1" colspan="{{ 1 + count($simpleTerms) + $thirdTermColCount }}" style="text-align:right;">
+                                OVERALL AVERAGE
+                                <span class="text-xs" style="color:#777;">
+                                    ({{ $studentData['overall']['annual_summary'] ?? 0 }} &times; 100 / {{ $studentData['overall']['total_obtainable'] ?? 0 }})
+                                </span>
+                            </td>
+                            <td class="border px-2 py-1 text-center" colspan="2" style="color:#056b05;">
+                                {{ isset($studentData['overall']['overall_average_percent']) ? $studentData['overall']['overall_average_percent'] . '%' : '-' }}
+                            </td>
+                            <td class="border px-2 py-1 text-center"></td>
                         </tr>
                     </tfoot>
                 </table>
 
-                {{-- Remarks --}}
-                {{-- <div class="teacher_comment">
+                {{-- Remarks (3rd Term) --}}
+                <div class="teacher_comment">
                     <br>
                     <table class="w-full">
                         <thead>
                             <tr class="table-head">
-                                <th style="text-align:center;" colspan="2">Remarks/Comments</th>
+                                <th style="text-align:center;" colspan="2">3rd Term Remarks/Comments</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -240,10 +306,70 @@
                         </tbody>
                     </table>
 
+                    {{-- 3rd Term Skills & Behaviours --}}
+                    @if (!empty($studentData['third_term_skills']) || !empty($studentData['third_term_behaviours']))
+                        <div style="margin-top: 30px;">
+                            <h3 style="text-align:center; font-weight:bold; font-size:1.1rem; margin-bottom:10px;">
+                                3RD TERM SKILLS AND BEHAVIOURS
+                            </h3>
+                            <div style="display:flex; justify-content:space-between; gap:30px;">
+                                <table class="border-collapse border border-gray-400 text-center w-1/2">
+                                    <thead>
+                                        <tr>
+                                            <th class="border px-2 py-1 text-left">SKILLS (1-5)</th>
+                                            @for ($i = 5; $i >= 1; $i--)
+                                                <th class="border px-2 py-1">{{ $i }}</th>
+                                            @endfor
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($studentData['third_term_skills'] as $s)
+                                            <tr>
+                                                <td class="border px-2 py-1 text-left">{{ $s->category->name }}</td>
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <td class="border px-2 py-1">
+                                                        @if ($s->score == $i)
+                                                            &#10003;
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
+                                <table class="border-collapse border border-gray-400 text-center w-1/2">
+                                    <thead>
+                                        <tr>
+                                            <th class="border px-2 py-1 text-left">BEHAVIOURS (1-5)</th>
+                                            @for ($i = 5; $i >= 1; $i--)
+                                                <th class="border px-2 py-1">{{ $i }}</th>
+                                            @endfor
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($studentData['third_term_behaviours'] as $b)
+                                            <tr>
+                                                <td class="border px-2 py-1 text-left">{{ $b->category->name }}</td>
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <td class="border px-2 py-1">
+                                                        @if ($b->score == $i)
+                                                            &#10003;
+                                                        @endif
+                                                    </td>
+                                                @endfor
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
                     <table style="width: 100%; margin-top:30px;">
                         <tr>
                             <td style="padding:15px;">
-                                {{ $latestRoot->teacher->name ?? '' }}
+                                {{ $thirdTermRoot->teacher->name ?? '' }}
                                 <br>
                                 <b><cite>Class Teacher</cite></b>
                             </td>
@@ -258,7 +384,7 @@
                         </tr>
                     </table>
                     <br><hr><br>
-                </div> --}}
+                </div>
             </div>
         @endforeach
     @endif

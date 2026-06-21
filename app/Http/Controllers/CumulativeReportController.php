@@ -68,10 +68,11 @@ class CumulativeReportController extends Controller
             'termsPresent' => $data['terms_present'],
             'roots' => $data['roots'],
             'subjectOrder' => $data['subject_order'],
+            'thirdTermHeaders' => $data['third_term_headers'],
             'students' => $data['students'],
             'teacherRemarks' => $data['teacherRemarks'],
             'hosRemarks' => $data['hosRemarks'],
-            'latestRoot' => $data['latestRoot'],
+            'thirdTermRoot' => $data['thirdTermRoot'],
         ]);
     }
 }
